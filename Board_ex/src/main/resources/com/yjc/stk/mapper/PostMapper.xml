@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjc.stk.mapper.PostMapper">
+
+		<!-- 페이징용 sql문 -->
+	<sql id="search">
+		where post_title like '%'||#{keyword}||'%' and post_ref like 'x'
+	</sql>
+	<sql id="pagingHeader">
+		select * from (
+		select rownum rn, a.* from(
+	</sql>
+	<sql id="pagingFooter">
+		) a
+		) where rn between #{start} and #{end}
+	</sql>
+
+	<insert id="post" parameterType="Map">
+		<selectKey keyProperty="post_id" resultType="String" order="BEFORE">
+			select concat(to_char(sysdate,'yymmdd'),to_char(post_id_seq.NEXTVAL,'FM0000')) from dual 
+		</selectKey>
+		insert into
+		yjc_post(post_id,post_title,post_cont,post_userid)
+		values(#{post_id},#{post_title},#{post_cont},#{post_userid})
+	</insert>
+	<insert id="fileUpload" parameterType="Map">
+		insert into
+		yjc_file(post_id,file_id,file_path,file_origin)
+		values(#{post_id},concat(to_char(sysdate,'yymmdd'),to_char(file_id_seq.NEXTVAL,'FM0000')),#{file_path},#{file_origin})
+	</insert>
+	
+	<select id="allList" resultType="map" parameterType="map">
+		<!-- 목록 조회 및 페이징 전체 쿼리 -->
+		<include refid="pagingHeader"></include>
+		select rownum,post_id,to_char(post_regdate,'yyyy/mm/dd')as
+		post_regdate,
+		to_char(post_moddate,'yyyy/mm/dd')as post_moddate ,
+		post_cont,post_title,post_visit,post_userid,post_ref
+		from yjc_post
+		<include refid="search"></include>
+		order by post_regdate desc
+		<include refid="pagingFooter"></include>
+	</select>
+	
+	
+	
+	
+	<!-- 총 게시물 갯수 가져오기 -->
+	<select id="totalPage" resultType="map">
+		select count(*) tot_page from yjc_post
+	</select>
+	<select id="totalPage2" resultType="map" parameterType="map">
+		select count(*) tot_page from yjc_post
+		where post_title like '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="postDetail" resultType="map">
+		select post_id,to_char(post_regdate,'yyyy/mm/dd')as post_regdate,
+		to_char(post_moddate,'yyyy/mm/dd')as post_moddate ,
+		post_cont,post_title,post_visit,post_userid,post_ref
+		from yjc_post
+		where post_id = #{post_id}
+	</select>
+	<select id="post_reply" resultType="map">
+		select post_id, post_cont, post_userid,to_char(post_regdate,'yyyy/mm/dd')as
+		post_regdate,to_char(post_moddate,'yyyy/mm/dd')as post_moddate
+		from yjc_post
+		where post_ref = #{post_id}
+	</select>
+	<select id="fileFind" resultType="map">
+		select * from yjc_file
+		where post_id=#{post_id}
+	</select>
+</mapper>

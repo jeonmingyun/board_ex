@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property value="oracle.jdbc.driver.OracleDriver" name="driverClassName" />
+		<property value="jdbc:oracle:thin:@39.127.7.90:1521:orcl" name="url" />
+		<property value="six" name="username" />
+		<property value="1234" name="password" />
+	</bean>
+	<!-- Sql session factory -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- mapper 부분 안에있는자료 올림 -->
+	<mybatis-spring:scan base-package="com.yjc.stk.mapper" />
+	 <!-- service 부분 안에있는자료 올림  -->
+	<context:component-scan base-package="com.yjc.stk.service" />
+</beans>

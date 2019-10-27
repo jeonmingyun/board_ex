@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjc.stk.mapper.MemberMapper">
+	<select id="getMemberList" resultType="com.yjc.stk.domain.MemberVO">
+		select * from yjc_member
+	</select>
+	<select id="login" resultType="com.yjc.stk.domain.MemberVO">
+		select * from yjc_member
+		where member_id=#{member_id}
+	</select>
+	<select id="idSearch" resultType="com.yjc.stk.domain.MemberVO">
+		select * from yjc_member where member_id LIKE #{member_id}
+	</select>
+	
+	<insert id="join" parameterType="com.yjc.stk.domain.MemberVO">
+		insert into yjc_member values(#{member_id},#{member_pw})
+	</insert>
+</mapper>
